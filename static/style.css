@@ -1,0 +1,830 @@
+/* =============================================================
+   static/style.css
+   =================
+   Styling for TripMate AI's single page (templates/index.html).
+
+   Layout of this file:
+   1. Reset + page background (shared by the whole page)
+   2. Hero header + mega menu — adapted from a CodePen challenge
+      (credit + details in the section comment below and in README.md)
+   3. The planner app itself: input card, quick prompts, results,
+      PDF/print styling, and responsive tweaks
+   ============================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    min-height: 100vh;
+    background: #07111f;
+    color: #ffffff;
+    overflow-x: hidden;
+}
+
+.page-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(168, 85, 247, 0.18), transparent 28%),
+        linear-gradient(135deg, #07111f 0%, #0f172a 45%, #111827 100%);
+}
+
+.gradient-circle {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(60px);
+    opacity: 0.45;
+}
+
+.circle-1 {
+    width: 300px;
+    height: 300px;
+    background: #2563eb;
+    top: 8%;
+    left: 5%;
+}
+
+.circle-2 {
+    width: 260px;
+    height: 260px;
+    background: #9333ea;
+    top: 20%;
+    right: 8%;
+}
+
+.circle-3 {
+    width: 220px;
+    height: 220px;
+    background: #14b8a6;
+    bottom: 8%;
+    left: 35%;
+}
+
+/* =============================================================
+   HERO HEADER + MEGA MENU
+   -------------------------------------------------------------
+   Adapted from "Codepen Challenge: Huge Headers/Mega Menus" by
+   Sicontis — https://codepen.io/Sicontis/pen/OJzOWxq (MIT License).
+   The clip-path text/image reveal technique and overall two-part
+   layout (full-screen slider + slide-out overlay menu) are from the
+   original pen. Colors, copy, images, and the menu content below
+   were rewritten for TripMate; class names were also renamed and
+   scoped with "hero-"/"menu-" prefixes (the original used bare tag
+   selectors like `nav`, `main`, `section`, which would otherwise
+   collide with the many <nav>/<main>/<section> elements already
+   used elsewhere on this page).
+
+   One deliberate simplification from the original: it loaded a
+   separate "Poppins" Google Font. We reuse the Inter font already
+   used by the rest of the page instead, to keep the page visually
+   consistent and avoid an extra web font request.
+   ============================================================= */
+
+.hero-header {
+    --hero-black: #0b1220;
+    --hero-white: #f8fafc;
+    --hero-pill: #dbeafe;
+    --hero-accent: #7c3aed;
+
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+    background: var(--hero-black);
+}
+
+/*  Top nav bar: brand pill (left) + hamburger (right)
+----------------------------------------------- */
+.hero-nav {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    padding: 1.2em 5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hero-brand {
+    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--hero-pill);
+    background: linear-gradient(135deg, #2563eb, var(--hero-accent));
+    padding: 6px 14px;
+    border-radius: 8px;
+}
+
+.hero-nav-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    color: var(--hero-white);
+}
+
+/* Kept from the original design: these two placeholder links are
+   intentionally invisible (they reserve layout space but have
+   nowhere to link to yet). Give them real hrefs/behavior when this
+   project grows an "About" or "How it works" page. */
+.hero-nav-links li:not(#hero-burger) {
+    visibility: hidden;
+    margin-right: 1.5em;
+}
+
+#hero-burger {
+    width: min-content;
+    height: 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    cursor: pointer;
+}
+
+#hero-burger span {
+    display: block;
+    height: 3px;
+    width: 22px;
+    background-color: var(--hero-white);
+    border-radius: 200px;
+    transition: transform 0.3s 0.3s;
+}
+
+#hero-burger.active span:nth-of-type(1) {
+    transform: translateY(-3px) scaleX(1.3);
+}
+
+#hero-burger.active span:nth-of-type(3) {
+    transform: translateY(3px) scaleX(1.3);
+}
+
+/*  Full-screen slider: 5 stacked slides, cycled by static/hero.js
+----------------------------------------------- */
+.hero-slider {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-slide {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* --i is set inline per slide (style="--i: N") purely to control
+       stacking order via z-index, matching the original pen. */
+    z-index: var(--i);
+}
+
+.hero-slide-info {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    right: 5%;
+    transform: translateY(-50%);
+    z-index: 8;
+}
+
+.hero-slide-info h2 {
+    font-size: clamp(1.8rem, 7vw, 4rem);
+    line-height: clamp(1.8rem, 7vw, 4rem);
+    text-transform: uppercase;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--hero-pill);
+}
+
+.hero-slide-info h1 {
+    color: var(--hero-white);
+    font-size: clamp(2.6rem, 9vw, 6rem);
+    line-height: clamp(2.6rem, 9vw, 6rem);
+    text-transform: uppercase;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+.hero-slide-info h3 {
+    color: var(--hero-white);
+    font-size: 1.4rem;
+    font-weight: normal;
+    margin-top: 1.4em;
+    opacity: 0.85;
+}
+
+.hero-slide-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+/* Same 5 demo travel photos used by the original CodePen. */
+.hsi-1 {
+    background-image: url("https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80");
+}
+/* Photo by Lucas Favre — https://unsplash.com/photos/BRTV55ErUZg */
+
+.hsi-2 {
+    background-image: url("https://images.unsplash.com/photo-1517057011470-8f36d636e6ca?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80");
+}
+/* Photo by Roell de Ram — https://unsplash.com/photos/2DM7eOR5iyc */
+
+.hsi-3 {
+    background-image: url("https://images.unsplash.com/flagged/photo-1552035791-b3cc1632e933?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2069&q=80");
+}
+/* Photo by Bernd Wahlbrinck — https://unsplash.com/photos/lVVvYiR66kw */
+
+.hsi-4 {
+    background-image: url("https://images.unsplash.com/photo-1574700273608-7962d3602a9f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80");
+}
+/* Photo by Micheal Schofield — https://unsplash.com/photos/d0ohwP3BRf4 */
+
+.hsi-5 {
+    background-image: url("https://images.unsplash.com/photo-1605045544284-d13c6d6a60a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80");
+}
+/* Photo by Go To Vietnam / Unsplash */
+
+.hero-scroll-cta {
+    position: absolute;
+    left: 50%;
+    bottom: 8%;
+    transform: translateX(-50%);
+    z-index: 8;
+    border: 1px solid rgba(248, 250, 252, 0.5);
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+    color: var(--hero-white);
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.hero-scroll-cta:hover {
+    background: rgba(37, 99, 235, 0.35);
+}
+
+/*  Overlay mega menu, toggled by #hero-burger
+    -----------------------------------------------
+    NOTE: the original CodePen selected this element with a bare
+    `document.querySelector("section")`, which happened to work
+    there because it was the only <section> on the page. This app
+    already has several <section> elements (the planner card, the
+    results panel, the error box), so that selector would have
+    grabbed the wrong one — this element uses a dedicated class
+    (.mega-menu-overlay) instead, and static/hero.js targets it
+    directly by that class.
+
+    Positioning is also `fixed` (covers the viewport wherever you've
+    scrolled to) rather than the original's `absolute` (anchored to
+    the top of the whole page), since this page is much taller than
+    the original pen's.
+----------------------------------------------- */
+.mega-menu-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 15;
+    overflow-y: auto;
+    padding: 8em 5em 3em 5em;
+    background-color: var(--hero-white);
+    color: var(--hero-black);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+}
+
+.menu-columns {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 65% 1fr;
+    grid-auto-rows: min-content;
+    grid-gap: 2em;
+}
+
+.menu-columns h3 {
+    font-weight: 700;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    margin-bottom: 0.4em;
+}
+
+.menu-column:nth-of-type(1) {
+    grid-column: 1/2;
+    grid-row: 1/4;
+}
+
+.menu-column:nth-of-type(2) {
+    grid-column: 2/3;
+    grid-row: 1/2;
+}
+
+.menu-column:nth-of-type(3) {
+    grid-column: 2/3;
+    grid-row: 2/3;
+}
+
+.menu-column:nth-of-type(4) {
+    grid-column: 2/3;
+    grid-row: 3/4;
+}
+
+.menu-destination-groups {
+    list-style: none;
+    padding: 0.3em 1em;
+}
+
+.menu-destination-groups > li {
+    margin-bottom: 0.6em;
+}
+
+.menu-destination-groups p {
+    color: var(--hero-accent);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0.6em 0;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.menu-destination-pills {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.menu-destination-pills li {
+    padding: 0.5em 1em;
+    background-color: var(--hero-pill);
+    border-radius: 500px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    color: #1e293b;
+    transition: background-color 0.2s ease;
+}
+
+.menu-destination-pills li:hover {
+    background-color: #bfdbfe;
+}
+
+.menu-plain-list {
+    list-style: none;
+}
+
+.menu-plain-list li {
+    font-size: 1.05rem;
+    padding: 0.35em 0;
+    color: #334155;
+}
+
+.menu-plain-list--clickable li {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.menu-plain-list--clickable li:hover {
+    color: var(--hero-accent);
+}
+
+@media screen and (max-width: 760px) {
+    .hero-nav {
+        padding: 1em 1.5em;
+    }
+
+    .hero-brand {
+        font-size: 0.85rem;
+    }
+
+    .mega-menu-overlay {
+        padding: 7em 1.5em 2em 1.5em;
+    }
+
+    .menu-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .menu-column:nth-of-type(1) {
+        grid-column: 1/2;
+        grid-row: 1/2;
+    }
+
+    .menu-column:nth-of-type(2) {
+        grid-column: 1/2;
+        grid-row: 2/3;
+    }
+
+    .menu-column:nth-of-type(3) {
+        grid-column: 1/2;
+        grid-row: 3/4;
+    }
+
+    .menu-column:nth-of-type(4) {
+        grid-column: 1/2;
+        grid-row: 4/5;
+    }
+}
+
+/* =============================================================
+   PLANNER APP
+   ============================================================= */
+
+.app-container {
+    width: min(1120px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 56px 0 30px;
+}
+
+.planner-card,
+.result-section {
+    background: rgba(15, 23, 42, 0.76);
+    border: 1px solid rgba(148, 163, 184, 0.26);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+}
+
+.planner-card {
+    padding: 28px;
+}
+
+.card-header,
+.result-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.card-header h2,
+.result-header h2 {
+    font-size: 1.45rem;
+    margin-bottom: 8px;
+}
+
+.card-header p,
+.result-header p {
+    color: #94a3b8;
+    line-height: 1.5;
+}
+
+.status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(34, 197, 94, 0.12);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 18px #22c55e;
+}
+
+.input-area {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: stretch;
+}
+
+textarea {
+    width: 100%;
+    min-height: 150px;
+    resize: vertical;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 22px;
+    background: rgba(2, 6, 23, 0.64);
+    color: #ffffff;
+    padding: 20px;
+    font-size: 1rem;
+    line-height: 1.6;
+    outline: none;
+    transition: 0.25s ease;
+}
+
+textarea:focus {
+    border-color: rgba(96, 165, 250, 0.85);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18);
+}
+
+textarea::placeholder {
+    color: #64748b;
+}
+
+#sendBtn {
+    min-width: 170px;
+    border: none;
+    border-radius: 22px;
+    padding: 0 24px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 18px 38px rgba(37, 99, 235, 0.35);
+    transition: 0.25s ease;
+}
+
+#sendBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 50px rgba(124, 58, 237, 0.4);
+}
+
+#sendBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.quick-prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.quick-prompts button {
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(30, 41, 59, 0.7);
+    color: #dbeafe;
+    border-radius: 999px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.quick-prompts button:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(96, 165, 250, 0.5);
+}
+
+.result-section {
+    margin-top: 26px;
+    padding: 28px;
+}
+
+.result-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.copy-btn,
+.download-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 800;
+    transition: 0.25s ease;
+}
+
+.copy-btn {
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(15, 23, 42, 0.9);
+    color: #ffffff;
+}
+
+.copy-btn:hover {
+    background: rgba(59, 130, 246, 0.22);
+}
+
+.download-btn {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: #ffffff;
+    box-shadow: 0 12px 30px rgba(34, 197, 94, 0.25);
+}
+
+.download-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 36px rgba(34, 197, 94, 0.35);
+}
+
+.pdf-content {
+    background: #ffffff;
+    color: #111827;
+    border-radius: 22px;
+    padding: 28px;
+}
+
+.pdf-title {
+    display: none;
+    color: #111827;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.result-box {
+    background: #ffffff;
+    color: #1f2937;
+    border: none;
+    padding: 0;
+    white-space: normal;
+    overflow-x: auto;
+}
+
+.result-box h1,
+.result-box h2,
+.result-box h3 {
+    color: #0f172a;
+    margin-top: 26px;
+    margin-bottom: 12px;
+    line-height: 1.25;
+    font-weight: 800;
+}
+
+.result-box h1:first-child,
+.result-box h2:first-child,
+.result-box h3:first-child {
+    margin-top: 0;
+}
+
+.result-box h1 {
+    font-size: 2rem;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 10px;
+}
+
+.result-box h2 {
+    font-size: 1.45rem;
+    border-left: 5px solid #2563eb;
+    padding-left: 12px;
+    background: #eff6ff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+}
+
+.result-box h3 {
+    font-size: 1.15rem;
+    color: #1d4ed8;
+}
+
+.result-box p {
+    margin-bottom: 14px;
+    line-height: 1.75;
+    color: #374151;
+}
+
+.result-box ul,
+.result-box ol {
+    margin: 10px 0 18px 24px;
+    color: #374151;
+}
+
+.result-box li {
+    margin-bottom: 8px;
+    line-height: 1.65;
+}
+
+.result-box strong {
+    color: #111827;
+    font-weight: 800;
+}
+
+.result-box hr {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 24px 0;
+}
+
+.result-box table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    color: #374151;
+}
+
+.result-box th,
+.result-box td {
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    text-align: left;
+}
+
+.result-box th {
+    background: #eff6ff;
+    color: #111827;
+    font-weight: 800;
+}
+
+.error-box {
+    margin-top: 22px;
+    padding: 18px 20px;
+    border-radius: 18px;
+    background: rgba(239, 68, 68, 0.13);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fecaca;
+    line-height: 1.5;
+}
+
+.loader {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255,255,255,0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.85s linear infinite;
+}
+
+.hidden {
+    display: none;
+}
+
+footer {
+    text-align: center;
+    color: #64748b;
+    padding: 30px 16px 40px;
+    font-size: 0.92rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media print {
+    body {
+        background: #ffffff;
+    }
+
+    .hero-header,
+    .mega-menu-overlay,
+    .planner-card,
+    footer,
+    .result-actions,
+    #threadInfo {
+        display: none;
+    }
+
+    .result-section {
+        box-shadow: none;
+        border: none;
+        background: #ffffff;
+    }
+
+    .pdf-title {
+        display: block;
+    }
+}
+
+@media (max-width: 760px) {
+    .app-container {
+        padding-top: 34px;
+    }
+
+    .planner-card,
+    .result-section {
+        padding: 20px;
+        border-radius: 22px;
+    }
+
+    .card-header,
+    .result-header {
+        flex-direction: column;
+    }
+
+    .input-area {
+        grid-template-columns: 1fr;
+    }
+
+    #sendBtn {
+        min-height: 56px;
+    }
+
+    .result-actions {
+        width: 100%;
+    }
+
+    .copy-btn,
+    .download-btn {
+        flex: 1;
+    }
+
+    .pdf-content {
+        padding: 20px;
+    }
+}

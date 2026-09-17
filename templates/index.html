@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TripMate AI</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="page-bg">
+        <div class="gradient-circle circle-1"></div>
+        <div class="gradient-circle circle-2"></div>
+        <div class="gradient-circle circle-3"></div>
+    </div>
+
+    <!-- =========================================================
+         Huge Header hero + mega menu.
+         Adapted from "Codepen Challenge: Huge Headers/Mega Menus"
+         by Sicontis (https://codepen.io/Sicontis/pen/OJzOWxq), MIT
+         License. Layout + GSAP clip-path animation technique are
+         from the original pen; copy, images, and menu content were
+         rewritten for TripMate. Styling lives in static/style.css,
+         behavior in static/hero.js. Full credit in README.md.
+         ========================================================= -->
+    <header class="hero-header">
+
+        <nav class="hero-nav">
+            <span class="hero-brand">TripMate AI</span>
+
+            <ul class="hero-nav-links">
+                <!-- Placeholder links kept from the original design;
+                     see the comment on .hero-nav-links in style.css. -->
+                <li>How it works</li>
+                <li>About</li>
+                <li id="hero-burger" role="button" tabindex="0" aria-label="Open menu" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="hero-slider">
+            <article class="hero-slide" id="hero-slide-1" style="--i: 5">
+                <div class="hero-slide-info">
+                    <h2>Plan Your</h2>
+                    <h1>Perfect Trip</h1>
+                    <h3>AI-powered flights, hotels &amp; itineraries</h3>
+                </div>
+                <div class="hero-slide-image hsi-1"></div>
+            </article>
+
+            <article class="hero-slide" id="hero-slide-2" style="--i: 4">
+                <div class="hero-slide-info">
+                    <h2>Discover</h2>
+                    <h1>New Places</h1>
+                    <h3>From budget backpacking to luxury escapes</h3>
+                </div>
+                <div class="hero-slide-image hsi-2"></div>
+            </article>
+
+            <article class="hero-slide" id="hero-slide-3" style="--i: 3">
+                <div class="hero-slide-info">
+                    <h2>Compare</h2>
+                    <h1>Flights &amp; Hotels</h1>
+                    <h3>Live flight status and curated hotel picks</h3>
+                </div>
+                <div class="hero-slide-image hsi-3"></div>
+            </article>
+
+            <article class="hero-slide" id="hero-slide-4" style="--i: 2">
+                <div class="hero-slide-info">
+                    <h2>Get a Full</h2>
+                    <h1>Day-by-Day Plan</h1>
+                    <h3>A complete itinerary in under a minute</h3>
+                </div>
+                <div class="hero-slide-image hsi-4"></div>
+            </article>
+
+            <article class="hero-slide" id="hero-slide-5" style="--i: 1">
+                <div class="hero-slide-info">
+                    <h2>Powered By</h2>
+                    <h1>Multi-Agent AI</h1>
+                    <h3>LangGraph agents working together for you</h3>
+                </div>
+                <div class="hero-slide-image hsi-5"></div>
+            </article>
+        </div>
+
+        <button class="hero-scroll-cta" onclick="scrollToPlanner()" aria-label="Scroll to the planner">
+            Start Planning &darr;
+        </button>
+
+    </header>
+
+    <!-- Overlay mega menu, toggled by #hero-burger above (see static/hero.js). -->
+    <div class="mega-menu-overlay" id="megaMenuOverlay">
+        <ul class="menu-columns">
+
+            <li class="menu-column menu-column--wide">
+                <h3>Popular Destinations</h3>
+                <ul class="menu-destination-groups">
+                    <li>
+                        <p>Asia</p>
+                        <ul class="menu-destination-pills">
+                            <li onclick="planTripTo('Bali, Indonesia')">Bali</li>
+                            <li onclick="planTripTo('Thailand')">Thailand</li>
+                            <li onclick="planTripTo('Vietnam')">Vietnam</li>
+                            <li onclick="planTripTo('Japan')">Japan</li>
+                            <li onclick="planTripTo('Singapore')">Singapore</li>
+                            <li onclick="planTripTo('Malaysia')">Malaysia</li>
+                            <li onclick="planTripTo('the Maldives')">Maldives</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p>Europe</p>
+                        <ul class="menu-destination-pills">
+                            <li onclick="planTripTo('France')">France</li>
+                            <li onclick="planTripTo('Italy')">Italy</li>
+                            <li onclick="planTripTo('Spain')">Spain</li>
+                            <li onclick="planTripTo('Greece')">Greece</li>
+                            <li onclick="planTripTo('Iceland')">Iceland</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p>Middle East</p>
+                        <ul class="menu-destination-pills">
+                            <li onclick="planTripTo('Dubai')">Dubai</li>
+                            <li onclick="planTripTo('Jordan')">Jordan</li>
+                            <li onclick="planTripTo('Turkey')">Turkey</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="menu-column">
+                <h3>How TripMate Works</h3>
+                <ul class="menu-plain-list">
+                    <li>1. Flight Agent searches live flights</li>
+                    <li>2. Hotel Agent finds hotel picks</li>
+                    <li>3. Itinerary Agent drafts your plan</li>
+                    <li>4. Final Agent writes your answer</li>
+                </ul>
+            </li>
+
+            <li class="menu-column">
+                <h3>Quick Prompts</h3>
+                <ul class="menu-plain-list menu-plain-list--clickable">
+                    <li onclick="selectQuickPrompt('Plan a complete 7 days Japan trip from Taiwan including flights, hotels and sightseeing under NT$60,000.')">Japan Trip</li>
+                    <li onclick="selectQuickPrompt('Plan a 5 days Dubai trip from Taiwan with flights, hotels and sightseeing.')">Dubai Trip</li>
+                    <li onclick="selectQuickPrompt('Plan a 7 days Thailand trip from Taiwan with budget hotels and sightseeing.')">Thailand Trip</li>
+                    <li onclick="selectQuickPrompt('Give me all country flight info.')">Global Flights</li>
+                </ul>
+            </li>
+
+            <li class="menu-column">
+                <h3>About TripMate</h3>
+                <ul class="menu-plain-list">
+                    <li>FastAPI backend</li>
+                    <li>LangGraph multi-agent orchestration</li>
+                    <li>Groq LLM + Tavily + AviationStack</li>
+                    <li>Built by Adam</li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+
+    <main class="app-container">
+
+        <section class="planner-card" id="plannerSection">
+
+            <div class="card-header">
+                <div>
+                    <h2>Where do you want to go?</h2>
+                    <p>
+                        Example: Plan a complete 7 days Japan trip from Taiwan under NT$60,000.
+                    </p>
+                </div>
+
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    Online
+                </div>
+            </div>
+
+            <div class="input-area">
+                <textarea
+                    id="userInput"
+                    placeholder="Plan a complete 7 days Japan trip including flights, hotels and sightseeing under NT$60,000..."
+                ></textarea>
+
+                <button id="sendBtn" onclick="sendMessage()">
+                    <span id="btnText">Generate Plan</span>
+                    <span id="btnLoader" class="loader hidden"></span>
+                </button>
+            </div>
+
+            <div class="quick-prompts">
+                <button onclick="setPrompt('Plan a complete 7 days Japan trip from Taiwan including flights, hotels and sightseeing under NT$60,000.')">
+                    Japan Trip
+                </button>
+
+                <button onclick="setPrompt('Plan a 5 days Dubai trip from Taiwan with flights, hotels and sightseeing.')">
+                    Dubai Trip
+                </button>
+
+                <button onclick="setPrompt('Plan a 7 days Thailand trip from Taiwan with budget hotels and sightseeing.')">
+                    Thailand Trip
+                </button>
+
+                <button onclick="setPrompt('Give me all country flight info.')">
+                    Global Flights
+                </button>
+            </div>
+
+        </section>
+
+        <section id="resultSection" class="result-section hidden">
+
+            <div class="result-header">
+                <div>
+                    <h2>Your AI Travel Plan</h2>
+                    <p id="threadInfo">Thread ID: -</p>
+                </div>
+
+                <div class="result-actions">
+                    <button class="copy-btn" onclick="copyResult()">
+                        Copy
+                    </button>
+
+                    <button class="download-btn" onclick="downloadPDF()">
+                        Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <div id="pdfContent" class="pdf-content">
+                <h1 class="pdf-title">AI Travel Plan</h1>
+                <div id="resultBox" class="result-box"></div>
+            </div>
+
+        </section>
+
+        <section id="errorBox" class="error-box hidden"></section>
+
+    </main>
+
+    <footer>
+        Built with FastAPI, LangGraph, Groq, PostgreSQL, Tavily and AviationStack
+    </footer>
+
+    <!-- Markdown Renderer -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- PDF Download Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- GSAP: drives the hero header's clip-path text/image reveal animation
+         (see static/hero.js). Loaded before hero.js since hero.js calls
+         gsap.* as soon as it runs. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <!-- Your Custom JS -->
+    <script src="/static/script.js"></script>
+
+    <!-- Hero header + mega menu behavior (loaded after script.js, since it
+         calls setPrompt() which script.js defines). -->
+    <script src="/static/hero.js"></script>
+
+</body>
+</html>
