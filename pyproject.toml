@@ -1,0 +1,44 @@
+# Managed by uv (https://docs.astral.sh/uv/). Local development should use
+# `uv sync` + `uv.lock`, which read this file. requirements.txt is kept in
+# parallel only for deployment platforms that expect a plain pip
+# requirements file — see the comment at the top of requirements.txt.
+
+[project]
+name = "tripmate-multi-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Adam", email = "lavouver96@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "airportsdata==20260315",
+    "fastapi==0.136.3",
+    "jinja2==3.1.6",
+    "langchain==1.3.2",
+    "langchain-community==0.4.2",
+    "langchain-groq==1.1.3",
+    "langchain-tavily==0.2.18",
+    "langgraph==1.2.2",
+    "langgraph-checkpoint-postgres==3.1.0",
+    "psycopg-pool==3.3.1",
+    "psycopg[binary]==3.3.4",
+    "pycountry==26.2.16",
+    "python-dotenv==1.2.2",
+    "requests==2.34.2",
+    "tavily-python==0.7.24",
+    "uvicorn==0.48.0",
+]
+
+# NOTE: this console-script entry point is currently unused by the running
+# app. It points at src/tripmate_multi_agent/main(), which is separate,
+# auto-generated scaffolding from `uv init` — the actual app is started via
+# `uv run python app.py` (or `uvicorn app:app`), not via this script. See
+# the docstring in src/tripmate_multi_agent/__init__.py for more detail.
+[project.scripts]
+tripmate-multi-agent = "tripmate_multi_agent:main"
+
+[build-system]
+requires = ["uv_build>=0.12.12,<0.13.0"]
+build-backend = "uv_build"
