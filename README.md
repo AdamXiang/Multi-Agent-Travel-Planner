@@ -42,6 +42,8 @@ plain functions, not "AI agents" in some magical sense.
 ```
 app.py                      FastAPI app: routes only, no agent logic
 backend.py                  Backward-compatible shim -> agent/graph.py
+Dockerfile                  Multi-stage container build (see its own comments)
+.dockerignore               Files excluded from the Docker build context
 
 agent/
   config.py                 Env vars, database URL, the Groq LLM client
@@ -111,6 +113,32 @@ focused.
    uv run uvicorn app:app --reload
    ```
    Then open http://127.0.0.1:8000 in your browser.
+
+## Running with Docker
+
+The project also ships a multi-stage `Dockerfile` (see the comments inside
+it for why it's split into a "builder" stage and a final stage) if you'd
+rather run TripMate in a container than set up uv locally.
+
+1. Copy `.env.template` to `.env` and fill in your API keys, same as the
+   local setup above — the container reads these at runtime; they are
+   never baked into the image itself (see `.dockerignore`).
+
+2. Build the image:
+   ```bash
+   docker build -t tripmate-ai .
+   ```
+
+3. Run it, passing your `.env` file in at runtime:
+   ```bash
+   docker run --rm -p 8000:8000 --env-file .env tripmate-ai
+   ```
+   Then open http://127.0.0.1:8000, same as the local setup.
+
+The image runs as a non-root user and defines a `HEALTHCHECK` against the
+`/health` route already in `app.py`, so it plays nicely with anything that
+expects a standard container: Docker Compose, Kubernetes, or a managed
+platform like Render/Fly.io/Railway.
 
 ## Frontend credit
 

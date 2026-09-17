@@ -1,0 +1,27 @@
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Secrets — never bake real credentials into an image; inject them at
+# runtime instead, e.g. `docker run --env-file .env ...`
+.env
+
+# Version control metadata — not needed inside the image
+.git
+.gitignore
+
+# Python bytecode/caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS/editor cruft
+.DS_Store
+.vscode/
+.idea/
