@@ -121,4 +121,4 @@ hamburger icon in the top-right) are adapted from the CodePen
 License (see the credit comment at the top of the relevant sections in
 `static/style.css` and `static/hero.js`). The layout, copy, images, and menu
 content were adapted to fit TripMate; the animation technique (GSAP
-`clip-path` reveals) is the original author's.
+`clip-path` reveals) is the original author's. The workflow design comes from [Build TripMate AI End-to-End: Multi-Agent Travel Planner ](https://github.com/entbappy/TripMate-AI-A-Multi-Agent-Travel-Planner-with-LangGraph/tree/main). 
